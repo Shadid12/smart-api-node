@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.16.4",
+    "morgan": "^1.9.1",
     "nodemod": "^1.5.19",
     "nodemon": "^1.18.5"
   },
