@@ -5,9 +5,12 @@ const mongoose = require('mongoose');
 const Patient = require("../models/patient");
 
 router.get('/', (req, res, next) => {
-    res.status(200).json({
-        message: 'Orders were fetched'
-    });
+    Patient.find().exec().then((patients) => {
+        res.status(200).json({
+            count: patients.length,
+            patients:  patients
+        })
+    })
 });
 
 router.post('/', (req, res, next) => {
@@ -39,11 +42,44 @@ router.post('/', (req, res, next) => {
     });
 });
 
-router.get('/:orderId', (req, res, next) => {
-    res.status(200).json({
-        message: 'Order details',
-        orderId: req.params.orderId
+router.get('/:patientId', (req, res, next) => {
+    Patient.findById(req.params.patientId).exec().then((aPatient) => {
+        if (!aPatient) {
+            return res.status(404).json({
+              message: "Patient not found"
+            });
+        }
+
+        res.status(200).json({
+            patient: aPatient,
+        });
+    
+    }).catch(err => {
+        res.status(500).json({
+          error: err
+        });
     });
+});
+
+
+router.patch('/:orderId', (req, res, next) => {
+    const id = req.params.productId;
+    const updateOps = req.body
+
+    Patient.update({ _id: id }, { $set: updateOps })
+        .exec()
+        .then((result) => {
+            res.status(200).json({
+                message: 'Patient updated',
+            });
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({
+              error: err
+            });
+        });
+
 });
 
 router.delete('/:orderId', (req, res, next) => {
