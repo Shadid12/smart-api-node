@@ -29,5 +29,34 @@ router.post('/', (req, res, next) => {
     });
 });
 
+// Get all the forms
+router.get('/', (req, res, next) => {
+    Form.find().exec().then((forms) => {
+        res.status(200).json({
+            count: forms.length,
+            forms:  forms
+        })
+    })
+});
+
+// Get Form by id
+router.get('/:formId', (req, res, next) => {
+    Form.findById(req.params.formId).exec().then((aForm) => {
+        if (!aForm) {
+            return res.status(404).json({
+              message: "Patient not found"
+            });
+        }
+
+        res.status(200).json({
+            forms: aForm,
+        });
+    
+    }).catch(err => {
+        res.status(500).json({
+          error: err
+        });
+    });
+});
 
 module.exports = router;
