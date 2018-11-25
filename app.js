@@ -31,8 +31,10 @@ app.use((req, res, next) => {
 // Routes which should handle requests
 const patientsRoutes = require('./api/routes/patients');
 const formRoutes = require('./api/routes/form');
+const userRoutes = require('./api/routes/users')
 app.use('/patients', patientsRoutes);
 app.use('/custom-forms', formRoutes);
+app.use('/users', userRoutes);
 
 
 app.use((req, res, next) => {
