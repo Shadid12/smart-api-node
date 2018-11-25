@@ -148,6 +148,28 @@ router.get("/user-info", checkAuth, (req, res, next) => {
       )
     })
 })
+
+
+router.get("/nurses", checkAuth, (req, res, next) => {
+  User.findById(req.userData.userId)
+    .exec()
+    .then((incomingUser) => {
+      if(incomingUser.role === 'admin') {
+        User.find({role: 'nurse'})
+          .exec()
+          .then(nurses => {
+            res.status(200).json({
+              nurses: nurses
+            });
+          })
+      }
+      else {
+        res.status(401).json({
+            message: "Not Authorized"
+        });
+      }
+    })
+});
   
 
 module.exports = router;
