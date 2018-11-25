@@ -31,7 +31,10 @@ router.post("/signup", checkAuth, (req, res, next) => {
                         _id: new mongoose.Types.ObjectId(),
                           email: req.body.email,
                           password: hash,
-                          role: req.body.role
+                          role: req.body.role,
+                          firstName: req.body.firstName,
+                          lastName: req.body.lastName,
+                          ren: req.body.ren
                         });
                         user
                         .save()
