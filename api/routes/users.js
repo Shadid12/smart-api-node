@@ -8,7 +8,6 @@ const User = require("../models/user");
 const checkAuth = require('../middleware/checkAuth');
 
 router.post("/signup", checkAuth, (req, res, next) => {
-  console.log('--->', req.userData);
   User.findById(req.userData.userId)
     .exec()
     .then((incomingUser) => {
@@ -30,22 +29,22 @@ router.post("/signup", checkAuth, (req, res, next) => {
                     } else {
                         const user = new User({
                         _id: new mongoose.Types.ObjectId(),
-                        email: req.body.email,
-                        password: hash,
-                        role: req.body.role
+                          email: req.body.email,
+                          password: hash,
+                          role: req.body.role
                         });
                         user
                         .save()
                         .then(result => {
                             console.log(result);
                             res.status(201).json({
-                            message: "User created"
+                              message: "User created"
                             });
                         })
                         .catch(err => {
                             console.log(err);
                             res.status(500).json({
-                            error: err
+                              error: err
                             });
                         });
                     }
@@ -107,7 +106,8 @@ router.post("/login", (req, res, next) => {
             );
             return res.status(200).json({
               message: "Auth successful",
-              token: token
+              token: token,
+              role: user[0].role
             });
           }
           res.status(401).json({
