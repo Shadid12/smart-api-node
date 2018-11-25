@@ -121,7 +121,30 @@ router.post("/login", (req, res, next) => {
           error: err
         });
       });
-  });
+});
+
+
+router.get("/user-info", checkAuth, (req, res, next) => {
+  User.findById(req.userData.userId)
+    .exec()
+    .then((user) => {
+      if(!user) {
+        return res.status(404).json({
+          message: 'User Not Found'
+        })
+      } 
+      return res.status(200).json(
+        {
+          message: 'Got User Info',
+          user: {
+            _id: user._id,
+            role: user.role,
+            email: user.email
+          }
+        }
+      )
+    })
+})
   
 
 module.exports = router;
