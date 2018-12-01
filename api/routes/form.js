@@ -3,6 +3,9 @@ const router = express.Router();
 const mongoose = require('mongoose');
 
 const Form = require("../models/form");
+const User = require("../models/user");
+
+const checkAuth = require('../middleware/checkAuth');
 
 
 // Create new Form
@@ -56,6 +59,39 @@ router.get('/:formId', (req, res, next) => {
         res.status(500).json({
           error: err
         });
+    });
+});
+
+
+router.patch("/:formId", checkAuth, (req, res, next) => {
+    User.findById(req.userData.userId)
+    .exec()
+    .then((incomingUser) => {
+        console.log('Incoming User >', incomingUser);
+        if(incomingUser.role === 'admin') { 
+            const id = req.params.formId;
+            Form.update({ _id: id }, {formFormat: req.body.formFormat })
+            .exec()
+            .then(result => {
+                res.status(200).json({
+                    message: 'ok',
+                    request: {
+                        type: 'GET',
+                        result
+                    }
+                })
+            })
+            .catch(err => {
+                res.status(500).json({
+                    error: err
+                })
+            })
+        }
+        else {
+            res.status(401).json({
+                message: "Not Authorized"
+            });
+        }
     });
 });
 
