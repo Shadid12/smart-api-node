@@ -62,6 +62,26 @@ router.get('/:formId', (req, res, next) => {
 });
 
 
+
+router.delete("/:formId", (req, res, next) => {
+    Form.remove({ _id: req.params.formId })
+      .exec()
+      .then(result => {
+        res.status(200).json({
+          message: "Form deleted",
+          request: {
+            type: "POST",
+            body: { productId: "ID", quantity: "Number" }
+          }
+        });
+      })
+      .catch(err => {
+        res.status(500).json({
+          error: err
+        });
+      });
+});
+
 router.patch("/:formId", (req, res, next) => {
     const id = req.params.formId;
     Form.update({ _id: id }, {formFormat: req.body.formFormat })
