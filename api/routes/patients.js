@@ -18,14 +18,7 @@ router.post('/', (req, res, next) => {
         if(!aPatient) {
             const patient = new Patient({
                 _id: mongoose.Types.ObjectId(),
-                firstname: req.body.firstname,
-                lastname: req.body.lastname,
-                age: req.body.age,
-                allergies: req.body.allergies,
-                gender: req.body.gender,
-                primary_diagonosis: req.body.primary_diagonosis,
-                physician: req.body.physician,
-                vitals: req.body.vitals
+                patientForm: req.body.formFormat
             });
             return patient.save();
         }
