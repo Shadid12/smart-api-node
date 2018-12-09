@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const Patient = require("../models/patient");
 
@@ -13,27 +15,84 @@ router.get('/', (req, res, next) => {
     })
 });
 
+
+
+// Creating Patients
 router.post('/', (req, res, next) => {
-    Patient.findById(req.body.productId).then((aPatient) => {
-        if(!aPatient) {
-            const patient = new Patient({
-                _id: mongoose.Types.ObjectId(),
-                patientForm: req.body.formFormat
+    Patient.find({ email : req.body.email })
+    .exec()
+    .then((patient) => {
+        if (patient.length >= 1) {
+            return res.status(409).json({
+            message: "Mail exists"
             });
-            return patient.save();
+        } 
+        else {
+            bcrypt.hash(req.body.password, 10, (err, hash) => { 
+                if (err) {
+                    return res.status(500).json({
+                    error: err
+                    });
+                }
+                else {
+                    const newPatient = new Patient({
+                        _id: new mongoose.Types.ObjectId(),
+                        email: req.body.email,
+                        password: hash,
+                        patientForm: req.body.formFormat
+                    });
+
+                    newPatient.save().then((result) => {
+                        console.log(result);
+                        res.status(201).json({
+                            message: "Patient created"
+                        });
+                    })
+                }
+            });
         }
-    }).then(newPatient => {
-        res.status(201).json({
-            message: "Created",
-            newPatient: newPatient
-        });
-    }).catch(err => {
-        console.log('ERROR--->', err);
-        res.status(500).json({
-          error: err
-        });
-    });
+    })
 });
+
+// Loggin in Patients
+router.post("/login", (req, res, next) => {
+    Patient.find({ email: req.body.email })
+    .exec()
+    .then((patient) => {
+        if (patient.length < 1) {
+            return res.status(401).json({
+              message: "Auth failed"
+            });
+        }
+        bcrypt.compare(req.body.password, patient[0].password, (err, result) => {
+            if (err) {
+                return res.status(401).json({
+                  message: "Auth failed"
+                });
+            }
+
+            if (result) {
+                const token = jwt.sign(
+                  {
+                    email: patient[0].email,
+                    patientId: patient[0]._id
+                  },
+                  'Super Secrect Key',
+                  {
+                      expiresIn: "1h"
+                  }
+                );
+                return res.status(200).json({
+                  message: "Auth successful",
+                  token: token,
+                  role: 'patient'
+                });
+            }
+        })
+
+    })
+});
+
 
 router.get('/:patientId', (req, res, next) => {
     Patient.findById(req.params.patientId).exec().then((aPatient) => {
