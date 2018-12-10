@@ -3,8 +3,9 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
 const Patient = require("../models/patient");
+
+const checkAuth = require('../middleware/checkAuth');
 
 router.get('/', (req, res, next) => {
     Patient.find().exec().then((patients) => {
@@ -94,8 +95,8 @@ router.post("/login", (req, res, next) => {
 });
 
 
-router.get('/:patientId', (req, res, next) => {
-    Patient.findById(req.params.patientId).exec().then((aPatient) => {
+router.get('/info', checkAuth,  (req, res, next) => {
+    Patient.findById(req.userData.patientId).exec().then((aPatient) => {
         if (!aPatient) {
             return res.status(404).json({
               message: "Patient not found"
