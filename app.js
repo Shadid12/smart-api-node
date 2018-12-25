@@ -31,9 +31,11 @@ app.use((req, res, next) => {
 const patientsRoutes = require('./api/routes/patients');
 const formRoutes = require('./api/routes/form');
 const userRoutes = require('./api/routes/users')
+const caseRoutes = require('./api/routes/case');
 app.use('/patients', patientsRoutes);
 app.use('/custom-forms', formRoutes);
 app.use('/users', userRoutes);
+app.use('/cases', caseRoutes);
 
 
 app.use((req, res, next) => {

@@ -28,7 +28,7 @@ router.post("/signup", checkAuth, (req, res, next) => {
                         });
                     } else {
                         const user = new User({
-                        _id: new mongoose.Types.ObjectId(),
+                          _id: new mongoose.Types.ObjectId(),
                           email: req.body.email,
                           password: hash,
                           role: req.body.role,
