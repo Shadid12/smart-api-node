@@ -5,7 +5,6 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
 
-
 mongoose.connect('mongodb://shadid2:longgone123@ds127899.mlab.com:27899/api_boiler');
 mongoose.Promise = global.Promise;
 
