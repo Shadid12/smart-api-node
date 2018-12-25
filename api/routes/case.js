@@ -3,6 +3,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 
 const Case = require("../models/case");
+const checkAuth = require('../middleware/checkAuth');
 
 // Creating Cases
 router.post('/', (req, res, next) => {
@@ -45,8 +46,8 @@ router.get('/', (req, res, next) => {
 })
 
 // Get Cases by nurseId
-router.get('/:nurseId', (req, res, next) => {
-    Case.find({ nurseId: req.params.nurseId }).exec().then((cases) => {
+router.get('/my', checkAuth, (req, res, next) => {
+    Case.find({ nurseId: req.userData.userId }).exec().then((cases) => {
         res.status(200).json({
             fetched: 'ok',
             cases: cases
