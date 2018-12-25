@@ -170,6 +170,18 @@ router.get("/nurses", checkAuth, (req, res, next) => {
       }
     })
 });
+
+
+router.get("/patients", (req, res, next) => {
+  User.find({ role: "patient" })
+    .select("firstName lastName email")
+    .exec()
+    .then((patients) => {
+      res.status(200).json({
+        patients: patients
+      });
+    })
+})
   
 
 module.exports = router;
