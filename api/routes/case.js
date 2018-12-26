@@ -59,5 +59,19 @@ router.get('/my', checkAuth, (req, res, next) => {
     })
 })
 
+// check if current User is requesting care from nurse
+router.get('/my/:patientId', checkAuth, (req, res, next) => {
+    Case.find({ nurseId: req.userData.userId, patientId: req.params.patientId }).exec().then((cases) => {
+        res.status(200).json({
+            fetched: 'ok',
+            case: cases[0]
+        })
+    }).catch(err => {
+        res.status(500).json({
+            error: err
+        })
+    })
+})
+
 
 module.exports = router;

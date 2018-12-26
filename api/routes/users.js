@@ -150,6 +150,27 @@ router.get("/user-info", checkAuth, (req, res, next) => {
     })
 })
 
+router.get("/user-profile/:userId", (req, res, next) => {
+  User.findById(req.params.userId).exec().then(user => {
+    if(!user) {
+      return res.status(404).json({
+        message: 'User Not Found'
+      })
+    }
+    else {
+      return res.status(200).json({
+        message: 'Got User Info',
+          user: {
+            _id: user._id,
+            role: user.role,
+            firstName: user.firstName,
+            lastName: user.lastName
+          }
+      })
+    }
+  })
+})
+
 
 router.get("/nurses", checkAuth, (req, res, next) => {
   User.findById(req.userData.userId)
