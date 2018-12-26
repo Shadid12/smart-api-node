@@ -4,30 +4,62 @@ const mongoose = require('mongoose');
 
 const Case = require("../models/case");
 const checkAuth = require('../middleware/checkAuth');
+const User = require("../models/user");
 
 // Creating Cases
-router.post('/', (req, res, next) => {
-    const newCase = new Case({
-        _id: new mongoose.Types.ObjectId(),
-        patientId: req.body.patientId,
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        nurseId: req.body.nurseId,
-        patientRequest: req.body.patientRequest,
-        nurseRequest: req.body.nurseRequest,
-        approved: req.body.approved
-    });
-
-    newCase.save().then(() => {
-        res.status(201).json({
-            message: "Case created"
+router.post('/',  checkAuth, (req, res, next) => {
+    console.log('--->', req.userData.userId);
+    User.findById(req.userData.userId).exec().then(user => {
+        console.log('A USER', user)
+        const newCase = new Case({
+            _id: new mongoose.Types.ObjectId(),
+            patientId: user._id,
+            patientEmail: user.email,
+            nurseId: req.body.nurseId,
+            patientRequest: req.body.patientRequest,
+            nurseRequest: req.body.nurseRequest,
+            approved: req.body.approved,
+            notes: req.body.notes,
+            firstName: user.firstName,
+            lastName: user.lastName
         });
+        newCase.save().then(() => {
+            res.status(201).json({
+                message: "Case created"
+            });
+        }).catch(err => {
+            console.log(err);
+            res.status(500).json({
+              error: err
+            });
+        });
+
     }).catch(err => {
-        console.log(err);
         res.status(500).json({
           error: err
         });
-    });
+    })
+    // const newCase = new Case({
+    //     _id: new mongoose.Types.ObjectId(),
+    //     patientId: req.userData.userId,
+    //     patientEmail: req.userData.email,
+    //     nurseId: req.body.nurseId,
+    //     patientRequest: req.body.patientRequest,
+    //     nurseRequest: req.body.nurseRequest,
+    //     approved: req.body.approved,
+    //     notes: req.body.notes
+    // });
+
+    // newCase.save().then(() => {
+    //     res.status(201).json({
+    //         message: "Case created"
+    //     });
+    // }).catch(err => {
+    //     console.log(err);
+    //     res.status(500).json({
+    //       error: err
+    //     });
+    // });
 });
 
 

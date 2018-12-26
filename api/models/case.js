@@ -10,7 +10,8 @@ const caseSchema = mongoose.Schema({
     firstName: String,
     lastName: String,
     fromDate: Date,
-    toDate: Date
+    toDate: Date,
+    notes: String
 });
 
 module.exports = mongoose.model('Case', caseSchema);
